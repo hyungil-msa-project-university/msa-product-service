@@ -2,6 +2,7 @@ package com.hyungil.productservice.domain.product.domain.entity;
 
 import com.hyungil.productservice.domain.BaseTimeEntity;
 import com.hyungil.productservice.domain.product.dto.request.AddProductRequestDto;
+import com.hyungil.productservice.domain.product.dto.request.UpdateProductRequestDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,6 +34,10 @@ public class Product extends BaseTimeEntity {
 		return Product.builder()
 			.productName(addProductRequestDto.getProductName())
 			.build();
+	}
+
+	public void updateProduct(UpdateProductRequestDto updateProductRequestDto) {
+		this.productName = updateProductRequestDto.getProductName();
 	}
 
 }

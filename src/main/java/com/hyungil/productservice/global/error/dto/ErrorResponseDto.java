@@ -9,18 +9,14 @@ import org.springframework.validation.FieldError;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorResponseDto {
 
-	public String message;
-	private static final String INVALID_PARAMS = "invalid params";
+	private String message;
 
 	public static ErrorResponseDto of(final String message) {
 		return new ErrorResponseDto(message);
 	}
 
-	public static ErrorResponseDto of(FieldError fieldError) {
-		if (fieldError == null) {
-			return new ErrorResponseDto(INVALID_PARAMS);
-		} else {
-			return new ErrorResponseDto(fieldError.getDefaultMessage());
-		}
+	public static ErrorResponseDto of(final FieldError fieldError) {
+		return new ErrorResponseDto(fieldError.getDefaultMessage());
 	}
+
 }

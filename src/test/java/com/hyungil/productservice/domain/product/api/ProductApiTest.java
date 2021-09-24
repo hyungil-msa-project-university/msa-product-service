@@ -3,11 +3,14 @@ package com.hyungil.productservice.domain.product.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyungil.productservice.domain.product.dto.request.AddProductRequestDto;
+import com.hyungil.productservice.domain.product.dto.request.UpdateProductRequestDto;
 import com.hyungil.productservice.domain.product.dto.response.GetProductResponseDto;
+import com.hyungil.productservice.domain.product.repository.ProductRepository;
 import com.hyungil.productservice.domain.product.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,9 +25,11 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @WebMvcTest(ProductApi.class)
 @MockBean(JpaMetamodelMappingContext.class)
@@ -51,6 +56,10 @@ class ProductApiTest {
 		.productName("상품")
 		.build();
 
+	UpdateProductRequestDto updateProductRequestDto = UpdateProductRequestDto.builder()
+		.productName("상품상품")
+		.build();
+
 
 	@BeforeEach
 	void beforeEach() {
@@ -74,6 +83,7 @@ class ProductApiTest {
 			.andExpect(status().isCreated());
 	}
 
+
 	@Test
 	@DisplayName("상품 이름에 Null을 등록하여 실패한 경우 Http Status Code 400(BadRequest)를 리턴")
 	void addProductIfNameIsNull() throws Exception {
@@ -87,7 +97,7 @@ class ProductApiTest {
 			.content(toJsonString(addProductRequestDto))
 		)
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("상품 이름은 필수 입력입니다."));
+			.andExpect(jsonPath("$.message").value("잘못된 상품 이름입니다."));
 	}
 
 	@Test
@@ -103,7 +113,7 @@ class ProductApiTest {
 			.content(toJsonString(addProductRequestDto))
 		)
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("상품 이름은 필수 입력입니다."));
+			.andExpect(jsonPath("$.message").value("잘못된 상품 이름입니다."));
 	}
 
 	@Test
@@ -119,7 +129,7 @@ class ProductApiTest {
 			.content(toJsonString(addProductRequestDto))
 		)
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.message").value("상품 이름은 필수 입력입니다."));
+			.andExpect(jsonPath("$.message").value("잘못된 상품 이름입니다."));
 	}
 
 	@Test
@@ -138,4 +148,18 @@ class ProductApiTest {
 	private String toJsonString(Object dto) throws JsonProcessingException {
 		return objectMapper.writeValueAsString(dto);
 	}
+
+	@Test
+	@DisplayName("상품 수정에 성공할 경우 Http Status Code 201(Created)를 리턴")
+	void updateProduct() throws Exception {
+
+		doNothing().when(productService).updateProduct(1L, updateProductRequestDto);
+
+		mockMvc.perform(put("/products/1")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(toJsonString(updateProductRequestDto))
+		)
+			.andExpect(status().isCreated());
+	}
+
 }
