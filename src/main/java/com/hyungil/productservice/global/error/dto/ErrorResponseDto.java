@@ -1,4 +1,4 @@
-package com.hyungil.productservice.global.common.error.dto;
+package com.hyungil.productservice.global.error.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 public class ErrorResponseDto {
 
 	public String message;
+	private static final String INVALID_PARAMS = "invalid params";
 
 	public static ErrorResponseDto of(final String message) {
 		return new ErrorResponseDto(message);
@@ -17,7 +18,7 @@ public class ErrorResponseDto {
 
 	public static ErrorResponseDto of(FieldError fieldError) {
 		if (fieldError == null) {
-			return new ErrorResponseDto("invalid params");
+			return new ErrorResponseDto(INVALID_PARAMS);
 		} else {
 			return new ErrorResponseDto(fieldError.getDefaultMessage());
 		}
