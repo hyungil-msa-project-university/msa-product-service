@@ -1,7 +1,8 @@
 package com.hyungil.productservice.global.error.handler;
 
 import com.hyungil.productservice.global.error.dto.ErrorResponseDto;
-import com.hyungil.productservice.global.error.exception.InvalidRequestException;
+import com.hyungil.productservice.global.error.exception.DuplicateRequestException;
+import com.hyungil.productservice.global.error.exception.NotFoundRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,16 +19,29 @@ public class ProductExceptionHandler {
 	public ErrorResponseDto handleMethodArgumentNotValidException(
 		MethodArgumentNotValidException exception) {
 
-		log.debug(exception.getBindingResult().getFieldError().getDefaultMessage());
-		return ErrorResponseDto
-			.of(exception.getBindingResult().getFieldError().getDefaultMessage());
+		String message = exception.getBindingResult().getFieldError().getDefaultMessage();
+		log.debug(message);
+
+		return ErrorResponseDto.of(message);
 	}
 
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(InvalidRequestException.class)
-	public ErrorResponseDto handleInvalidRequestException(InvalidRequestException exception) {
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(NotFoundRequestException.class)
+	public ErrorResponseDto handleNotFoundException(NotFoundRequestException exception) {
 
-		log.debug(exception.getMessage(), exception);
-		return ErrorResponseDto.of(exception.getMessage());
+		String message = exception.getMessage();
+		log.debug(message, exception);
+
+		return ErrorResponseDto.of(message);
+	}
+
+	@ResponseStatus(HttpStatus.CONFLICT)
+	@ExceptionHandler(DuplicateRequestException.class)
+	public ErrorResponseDto handleDuplicateRequestException(DuplicateRequestException exception) {
+
+		String message = exception.getMessage();
+		log.debug(message, exception);
+
+		return ErrorResponseDto.of(message);
 	}
 }
