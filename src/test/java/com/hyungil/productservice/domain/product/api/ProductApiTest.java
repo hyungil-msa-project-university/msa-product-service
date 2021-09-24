@@ -1,8 +1,9 @@
-package com.hyungil.productservice.domain.product.controller;
+package com.hyungil.productservice.domain.product.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyungil.productservice.domain.product.dto.request.AddProductRequestDto;
+import com.hyungil.productservice.domain.product.dto.response.GetProductResponseDto;
 import com.hyungil.productservice.domain.product.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,26 +14,28 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ProductController.class)
+@WebMvcTest(ProductApi.class)
 @MockBean(JpaMetamodelMappingContext.class)
-class ProductControllerTest {
+class ProductApiTest {
 
 	private final ObjectMapper objectMapper;
 	private final WebApplicationContext webApplicationContext;
 	private MockMvc mockMvc;
 
 	@Autowired
-	ProductControllerTest(ObjectMapper objectMapper, WebApplicationContext webApplicationContext) {
+	ProductApiTest(ObjectMapper objectMapper, WebApplicationContext webApplicationContext) {
 		this.objectMapper = objectMapper;
 		this.webApplicationContext = webApplicationContext;
 	}
@@ -43,6 +46,11 @@ class ProductControllerTest {
 	AddProductRequestDto addProductRequestDto = AddProductRequestDto.builder()
 		.productName("상품")
 		.build();
+
+	GetProductResponseDto getProductResponseDto = GetProductResponseDto.builder()
+		.productName("상품")
+		.build();
+
 
 	@BeforeEach
 	void beforeEach() {
@@ -112,6 +120,19 @@ class ProductControllerTest {
 		)
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("상품 이름은 필수 입력입니다."));
+	}
+
+	@Test
+	@DisplayName("특정 상품 조회에 성공할 경우 Http Status Code 201(Created)를 리턴")
+	void getProduct() throws Exception {
+
+		given(productService.getProduct(1L)).willReturn(getProductResponseDto);
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/products/1")
+			.contentType(MediaType.APPLICATION_JSON)
+		)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.productName").value("상품"));
 	}
 
 	private String toJsonString(Object dto) throws JsonProcessingException {
