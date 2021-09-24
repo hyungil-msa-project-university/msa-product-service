@@ -19,30 +19,38 @@ public class ProductService {
 
 	@Transactional
 	public void addProduct(AddProductRequestDto addProductRequestDto) {
+
 		Product product = Product.from(addProductRequestDto);
+
 		productRepository.save(product);
 	}
 
 	@Transactional(readOnly = true)
 	public GetProductResponseDto getProduct(Long id) {
+
 		Product product = FindByProductId(id);
+
 		return GetProductResponseDto.from(product);
 	}
 
 	@Transactional
 	public void updateProduct(Long id, UpdateProductRequestDto updateProductRequestDto) {
+
 		Product product = FindByProductId(id);
+
 		duplicateProductNameCheck(product, updateProductRequestDto);
+
 		product.updateProduct(updateProductRequestDto);
 	}
 
 	private Product FindByProductId(Long id) {
+
 		return productRepository.findByProductId(id)
 			.orElseThrow(() -> new NotFoundRequestException("존재하지 않는 상품입니다."));
 	}
 
-	private void duplicateProductNameCheck(Product product,
-		UpdateProductRequestDto updateProductRequestDto) {
+	private void duplicateProductNameCheck(Product product, UpdateProductRequestDto updateProductRequestDto) {
+
 		String updateName = updateProductRequestDto.getProductName();
 		String productName = product.getProductName();
 
