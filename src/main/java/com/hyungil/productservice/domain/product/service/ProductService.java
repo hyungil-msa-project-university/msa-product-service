@@ -1,5 +1,8 @@
 package com.hyungil.productservice.domain.product.service;
 
+import static com.hyungil.productservice.global.commom.util.constant.ErrorMessageConstant.NOT_CHANGE_PRODUCT_NAME;
+import static com.hyungil.productservice.global.commom.util.constant.ErrorMessageConstant.NOT_FOUND_PRODUCT;
+
 import com.hyungil.productservice.domain.product.dto.request.AddProductRequestDto;
 import com.hyungil.productservice.domain.product.domain.entity.Product;
 import com.hyungil.productservice.domain.product.dto.request.UpdateProductRequestDto;
@@ -43,10 +46,18 @@ public class ProductService {
 		product.updateProduct(updateProductRequestDto);
 	}
 
+	@Transactional
+	public void deleteProduct(Long id) {
+
+		FindByProductId(id);
+
+		productRepository.deleteById(id);
+	}
+
 	private Product FindByProductId(Long id) {
 
 		return productRepository.findByProductId(id)
-			.orElseThrow(() -> new NotFoundRequestException("존재하지 않는 상품입니다."));
+			.orElseThrow(() -> new NotFoundRequestException(NOT_FOUND_PRODUCT));
 	}
 
 	private void duplicateProductNameCheck(Product product, UpdateProductRequestDto updateProductRequestDto) {
@@ -55,7 +66,7 @@ public class ProductService {
 		String productName = product.getProductName();
 
 		if (productName.equals(updateName)) {
-			throw new DuplicateRequestException("이름을 변경하지 않습니다.");
+			throw new DuplicateRequestException(NOT_CHANGE_PRODUCT_NAME);
 		}
 	}
 

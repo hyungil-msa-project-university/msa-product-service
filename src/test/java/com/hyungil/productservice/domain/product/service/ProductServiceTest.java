@@ -44,6 +44,8 @@ class ProductServiceTest {
 		.productName("변경된 상품")
 		.build();
 
+	Long id = 1L;
+
 	@Test
 	@DisplayName("상품 등록에 성공한다.")
 	void addProduct() {
@@ -57,8 +59,6 @@ class ProductServiceTest {
 	@DisplayName("특정 상품 조회에 성공한다.")
 	void getProduct() {
 
-		Long id = 1L;
-
 		when(productRepository.findByProductId(1L)).thenReturn(Optional.of(product));
 
 		GetProductResponseDto getProductResponseDto = productService.getProduct(id);
@@ -69,8 +69,6 @@ class ProductServiceTest {
 	@Test
 	@DisplayName("특정 id를 가진 상품이 존재하지 않아 조회에 실패한다.")
 	void updateIfProductNotFound() {
-
-		Long id = 1L;
 
 		when(productRepository.findByProductId(id)).thenReturn(Optional.empty());
 
@@ -83,8 +81,6 @@ class ProductServiceTest {
 	@Test
 	@DisplayName("상품 수정에 성공한다.")
 	void updateProduct() {
-
-		Long id = 1L;
 
 		when(productRepository.findByProductId(id)).thenReturn(Optional.of(product));
 
@@ -99,13 +95,23 @@ class ProductServiceTest {
 	@DisplayName("특정 id를 가진 상품이 존재하지 않아 조회에 실패한다.")
 	public void getProductIfNotFound() {
 
-		Long id = 1L;
-
 		given(productRepository.findByProductId(id)).willReturn(Optional.empty());
 
 		assertThrows(NotFoundRequestException.class, () -> productService.getProduct(id));
 
 		verify(productRepository, times(1)).findByProductId(id);
+	}
+
+	@Test
+	@DisplayName("특정 상품 삭제에 성공한다.")
+	void deleteProduct() {
+
+		when(productRepository.findByProductId(1L)).thenReturn(Optional.of(product));
+
+		productService.deleteProduct(1L);
+
+		verify(productRepository, atLeastOnce()).deleteById(1L);
+
 	}
 
 }

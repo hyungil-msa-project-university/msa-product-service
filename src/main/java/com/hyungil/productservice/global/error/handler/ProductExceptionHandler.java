@@ -16,8 +16,7 @@ public class ProductExceptionHandler {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ErrorResponseDto handleMethodArgumentNotValidException(
-		MethodArgumentNotValidException exception) {
+	public ErrorResponseDto handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
 		String message = exception.getBindingResult().getFieldError().getDefaultMessage();
 		log.debug(message);
