@@ -7,6 +7,7 @@ import com.hyungil.productservice.domain.product.service.ProductService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -39,5 +40,11 @@ public class ProductApi {
 	@ResponseStatus(HttpStatus.CREATED)
 	public void updateProduct(@PathVariable Long id, @RequestBody UpdateProductRequestDto updateProductRequestDto) {
 		productService.updateProduct(id, updateProductRequestDto);
+	}
+
+	@ResponseStatus(HttpStatus.OK)
+	@DeleteMapping("/{id}")
+	public void deleteProduct(@PathVariable Long id){
+		productService.deleteProduct(id);
 	}
 }

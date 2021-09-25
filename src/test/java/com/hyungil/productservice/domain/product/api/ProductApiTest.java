@@ -7,10 +7,10 @@ import com.hyungil.productservice.domain.product.dto.request.UpdateProductReques
 import com.hyungil.productservice.domain.product.dto.response.GetProductResponseDto;
 import com.hyungil.productservice.domain.product.repository.ProductRepository;
 import com.hyungil.productservice.domain.product.service.ProductService;
+import com.hyungil.productservice.global.error.exception.DuplicateRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,6 +24,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -48,6 +49,9 @@ class ProductApiTest {
 	@MockBean
 	private ProductService productService;
 
+	@MockBean
+	private ProductRepository productRepository;
+
 	AddProductRequestDto addProductRequestDto = AddProductRequestDto.builder()
 		.productName("상품")
 		.build();
@@ -59,7 +63,6 @@ class ProductApiTest {
 	UpdateProductRequestDto updateProductRequestDto = UpdateProductRequestDto.builder()
 		.productName("상품상품")
 		.build();
-
 
 	@BeforeEach
 	void beforeEach() {
@@ -160,6 +163,20 @@ class ProductApiTest {
 			.content(toJsonString(updateProductRequestDto))
 		)
 			.andExpect(status().isCreated());
+	}
+
+	@Test
+	@DisplayName("상품 삭제 성공시 Http Status Code 200(Ok) 반환")
+	void deleteProduct() throws Exception {
+
+		doNothing().when(productService).deleteProduct(1L);
+
+		mockMvc.perform(
+			MockMvcRequestBuilders.delete("/products/{id}", 1)
+				.contentType(MediaType.APPLICATION_JSON)
+		)
+			.andExpect(status().isOk());
+
 	}
 
 }
