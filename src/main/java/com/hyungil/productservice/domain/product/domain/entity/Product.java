@@ -20,13 +20,13 @@ public class Product extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long productId;
+	private Long id;
 
 	private String productName;
 
 	@Builder
-	private Product(Long productId, String productName) {
-		this.productId = productId;
+	private Product(Long id, String productName) {
+		this.id = id;
 		this.productName = productName;
 	}
 
