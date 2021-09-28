@@ -3,11 +3,10 @@ package com.hyungil.productservice.domain.product.repository;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.hyungil.productservice.domain.product.domain.entity.Product;
+import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +37,7 @@ class ProductRepositoryTest {
 
 		productRepository.save(product);
 
-		Product saveProduct = productRepository.findByProductId(product.getProductId()).get();
+		Product saveProduct = productRepository.findById(product.getId()).get();
 
 		assertThat(product).isEqualTo(saveProduct);
 	}
@@ -61,7 +60,7 @@ class ProductRepositoryTest {
 		Product savedProduct = productRepository.save(product);
 
 		Optional<Product> productFindByName = productRepository
-			.findByProductId(product.getProductId());
+			.findById(product.getId());
 
 		productFindByName.ifPresent(
 			value -> assertEquals(savedProduct.getProductName(), value.getProductName()));
@@ -71,7 +70,7 @@ class ProductRepositoryTest {
 	@DisplayName("상품 엔티티의 아이디로 검색해서 데이터베이스에서 상품 가져오기 실패")
 	public void findByProductIdFailureTest() {
 
-		Optional<Product> productFindByName = productRepository.findByProductId(1L);
+		Optional<Product> productFindByName = productRepository.findById(1L);
 
 		assertEquals(Optional.empty(), productFindByName);
 	}
@@ -88,7 +87,7 @@ class ProductRepositoryTest {
 			assertNotNull(e);
 		}
 
-		Optional<Product> deletedProduct = productRepository.findByProductId(1L);
+		Optional<Product> deletedProduct = productRepository.findById(1L);
 
 		assertThat(deletedProduct).isEmpty();
 	}
@@ -103,6 +102,21 @@ class ProductRepositoryTest {
 			assertNotNull(e);
 		}
 
+	}
+
+	@Test
+	@DisplayName("데이터베이스에서 상품 테이블의 모든 데이터 가져오기")
+	public void findAll() {
+
+		Product product = Product.builder().productName("상품").build();
+		Product product2 = Product.builder().productName("상품2").build();
+
+		productRepository.save(product);
+		productRepository.save(product2);
+
+		List<Product> result = productRepository.findAll();
+
+		assertThat(result.size()).isEqualTo(2);
 	}
 
 }

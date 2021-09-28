@@ -1,6 +1,6 @@
 package com.hyungil.productservice.domain.product.domain.entity;
 
-import com.hyungil.productservice.domain.BaseTimeEntity;
+import com.hyungil.productservice.domain.model.BaseTimeEntity;
 import com.hyungil.productservice.domain.product.dto.request.AddProductRequestDto;
 import com.hyungil.productservice.domain.product.dto.request.UpdateProductRequestDto;
 import lombok.AccessLevel;
@@ -20,13 +20,13 @@ public class Product extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long productId;
+	private Long id;
 
 	private String productName;
 
 	@Builder
-	private Product(Long productId, String productName) {
-		this.productId = productId;
+	private Product(Long id, String productName) {
+		this.id = id;
 		this.productName = productName;
 	}
 

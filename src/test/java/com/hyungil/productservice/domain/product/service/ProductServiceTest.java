@@ -16,12 +16,17 @@ import com.hyungil.productservice.domain.product.dto.response.GetProductResponse
 import com.hyungil.productservice.domain.product.repository.ProductRepository;
 import com.hyungil.productservice.global.error.exception.NotFoundRequestException;
 import java.util.Optional;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -59,7 +64,7 @@ class ProductServiceTest {
 	@DisplayName("특정 상품 조회에 성공한다.")
 	void getProduct() {
 
-		when(productRepository.findByProductId(1L)).thenReturn(Optional.of(product));
+		when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
 		GetProductResponseDto getProductResponseDto = productService.getProduct(id);
 
@@ -67,46 +72,62 @@ class ProductServiceTest {
 	}
 
 	@Test
+	void getProductsByPagination() {
+
+		when(productRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(
+			Lists.newArrayList(Product.builder().productName("상품").build(),
+				Product.builder().productName("상품2").build())));
+
+		Page<Product> result = productRepository.findAll(PageRequest.of(0, 3));
+
+		assertThat(result.getNumberOfElements()).isEqualTo(2);
+
+		assertThat(result.getContent().get(0).getProductName()).isEqualTo("상품");
+		assertThat(result.getContent().get(1).getProductName()).isEqualTo("상품2");
+
+	}
+
+	@Test
 	@DisplayName("특정 id를 가진 상품이 존재하지 않아 조회에 실패한다.")
 	void updateIfProductNotFound() {
 
-		when(productRepository.findByProductId(id)).thenReturn(Optional.empty());
+		when(productRepository.findById(id)).thenReturn(Optional.empty());
 
 		assertThrows(NotFoundRequestException.class,
 			() -> productService.updateProduct(id, updateProductRequestDto));
 
-		verify(productRepository, times(1)).findByProductId(id);
+		verify(productRepository, times(1)).findById(id);
 	}
 
 	@Test
 	@DisplayName("상품 수정에 성공한다.")
 	void updateProduct() {
 
-		when(productRepository.findByProductId(id)).thenReturn(Optional.of(product));
+		when(productRepository.findById(id)).thenReturn(Optional.of(product));
 
 		productService.updateProduct(id, updateProductRequestDto);
 
 		assertThat(product.getProductName()).isEqualTo(updateProductRequestDto.getProductName());
 
-		verify(productRepository, atLeastOnce()).findByProductId(1L);
+		verify(productRepository, atLeastOnce()).findById(1L);
 	}
 
 	@Test
 	@DisplayName("특정 id를 가진 상품이 존재하지 않아 조회에 실패한다.")
 	public void getProductIfNotFound() {
 
-		given(productRepository.findByProductId(id)).willReturn(Optional.empty());
+		given(productRepository.findById(id)).willReturn(Optional.empty());
 
 		assertThrows(NotFoundRequestException.class, () -> productService.getProduct(id));
 
-		verify(productRepository, times(1)).findByProductId(id);
+		verify(productRepository, times(1)).findById(id);
 	}
 
 	@Test
 	@DisplayName("특정 상품 삭제에 성공한다.")
 	void deleteProduct() {
 
-		when(productRepository.findByProductId(1L)).thenReturn(Optional.of(product));
+		when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
 		productService.deleteProduct(1L);
 

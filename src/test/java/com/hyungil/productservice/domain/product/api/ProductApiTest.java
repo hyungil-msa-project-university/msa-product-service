@@ -7,7 +7,6 @@ import com.hyungil.productservice.domain.product.dto.request.UpdateProductReques
 import com.hyungil.productservice.domain.product.dto.response.GetProductResponseDto;
 import com.hyungil.productservice.domain.product.repository.ProductRepository;
 import com.hyungil.productservice.domain.product.service.ProductService;
-import com.hyungil.productservice.global.error.exception.DuplicateRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,16 +16,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -141,15 +140,22 @@ class ProductApiTest {
 
 		given(productService.getProduct(1L)).willReturn(getProductResponseDto);
 
-		mockMvc.perform(MockMvcRequestBuilders.get("/products/1")
+		mockMvc.perform(get("/products/1")
 			.contentType(MediaType.APPLICATION_JSON)
 		)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.productName").value("상품"));
 	}
 
-	private String toJsonString(Object dto) throws JsonProcessingException {
-		return objectMapper.writeValueAsString(dto);
+	@Test
+	@DisplayName("전체 상품 조회 성공시 Http Status Code 200(Ok) 반환")
+	void getProductsByPagination() throws Exception {
+		mockMvc.perform(get("/products")
+			.param("page", "1")
+			.param("size", "2")
+			.contentType(MediaType.APPLICATION_JSON))
+
+			.andExpect(status().isOk());
 	}
 
 	@Test
@@ -171,12 +177,15 @@ class ProductApiTest {
 
 		doNothing().when(productService).deleteProduct(1L);
 
-		mockMvc.perform(
-			MockMvcRequestBuilders.delete("/products/{id}", 1)
-				.contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(delete("/products/{id}", 1)
+			.contentType(MediaType.APPLICATION_JSON)
 		)
 			.andExpect(status().isOk());
 
+	}
+
+	private String toJsonString(Object dto) throws JsonProcessingException {
+		return objectMapper.writeValueAsString(dto);
 	}
 
 }

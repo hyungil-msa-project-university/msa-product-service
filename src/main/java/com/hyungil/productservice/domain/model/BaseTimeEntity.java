@@ -1,4 +1,4 @@
-package com.hyungil.productservice.domain;
+package com.hyungil.productservice.domain.model;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
