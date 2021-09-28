@@ -1,6 +1,6 @@
 package com.hyungil.productservice.domain.product.domain.entity;
 
-import com.hyungil.productservice.domain.BaseTimeEntity;
+import com.hyungil.productservice.domain.model.BaseTimeEntity;
 import com.hyungil.productservice.domain.product.dto.request.AddProductRequestDto;
 import com.hyungil.productservice.domain.product.dto.request.UpdateProductRequestDto;
 import lombok.AccessLevel;
