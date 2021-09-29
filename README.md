@@ -2,6 +2,14 @@
 
 상품 서비스 HTTP URL : http://localhost:8081
 
+### Rest Docs를 사용하여 API문서를 자동화 하였습니다.
+
+[API 문서 보기](HyungilJung.github.io)
+
+### 자세한 사항은 Pull Request를 참고해주시면 감사하겠습니다.
+
+[진행 과정](https://github.com/hyungil-msa-project-university/msa-product-service/pulls?q=is%3Apr+is%3Aclosed)
+
 ### 디렉토리 구조
 
 ```bash
