@@ -14,7 +14,7 @@
 
 ```bash
    ├─ main
-      ├─ kotlin
+      ├─ java
          ├─ com.hyungil.productservice
             ├─ domain                                             - 도메인을 담당하는 디렉토리     
                 ├─ product                           
