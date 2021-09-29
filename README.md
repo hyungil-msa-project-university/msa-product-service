@@ -63,4 +63,7 @@
                                  
 ```
 
+### ER 다이어그램
+
+![asd](https://user-images.githubusercontent.com/43127088/135290850-f8276a5b-308b-4d2e-ac59-d3d8351977ab.PNG)
 
