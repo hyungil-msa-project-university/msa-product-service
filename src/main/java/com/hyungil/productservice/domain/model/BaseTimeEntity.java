@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseTimeEntity {
 
+
 	@CreatedDate
 	@Column(updatable = false)
 	private LocalDateTime createdTime;
